@@ -37,6 +37,9 @@ jobs:
         chmod +x ./cc-test-reporter    
         ./cc-test-reporter before-build  
         pytest -v --junitxml=junit/test-results.xml
+
+    - name: See files
+      run: ls junit
     
     - name: Send mail
       uses: dawidd6/action-send-mail@v3
