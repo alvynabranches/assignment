@@ -1,0 +1,29 @@
+name: Check for CI
+
+on:
+  push: 
+    branches: *
+
+# env:
+
+jobs:
+  setup-build-publish:
+    name: Check for CI
+    runs-on: ubuntu-latest
+  
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip setuptools
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run the application
+      run: |
+        uvicorn app:app
