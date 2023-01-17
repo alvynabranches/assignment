@@ -36,12 +36,7 @@ jobs:
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter    
         chmod +x ./cc-test-reporter    
         ./cc-test-reporter before-build  
-        pytest -v
-    - store_test_results:
-        path: htmlcov
-
-    - name: See the files
-      run: ls htmlcov
+        pytest -v --junitxml=junit/test-results.xml
     
     - name: Send mail
       uses: dawidd6/action-send-mail@v3
@@ -63,7 +58,7 @@ jobs:
         # in_reply_to: <random-luke@example.com>
         ignore_cert: true
         convert_markdown: true
-        # attachments: attachments.zip,git.diff,./dist/static/*.js
+        attachments: junit/test-results.xml
         priority: high
       if: always()
         
