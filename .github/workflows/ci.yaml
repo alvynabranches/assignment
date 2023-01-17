@@ -2,7 +2,8 @@ name: Check for CI
 
 on:
   push: 
-    branches: *
+    branches: 
+    - *
 
 # env:
 
