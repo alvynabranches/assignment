@@ -37,7 +37,7 @@ jobs:
         chmod +x ./cc-test-reporter    
         ./cc-test-reporter before-build  
         pytest -v
-      store_test_results:
+    - store_test_results:
         path: htmlcov
 
     - name: See the files
