@@ -30,7 +30,6 @@ jobs:
     #   run: |
     #     uvicorn app:app
     
-
     - name: Test
       run: |
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter    
@@ -40,6 +39,9 @@ jobs:
 
     - name: See files
       run: ls junit
+
+    - name: Check docker image
+      run: docker image build -t app .
     
     - name: Send mail
       uses: dawidd6/action-send-mail@v3
