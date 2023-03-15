@@ -5,7 +5,10 @@ on:
     branches: 
     - '*'
 
-# env:
+env:
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: "test-app"
+  GKE_ZONE: ${{ secrets.GKE_ZONE }}
 
 jobs:
   setup-build-publish:
@@ -31,39 +34,38 @@ jobs:
     #     uvicorn app:app
     
     - name: Test
-      run: |
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter    
-        chmod +x ./cc-test-reporter    
-        ./cc-test-reporter before-build  
+      run: |  
         pytest -v --junitxml=junit/test-results.xml
-
-    - name: See files
-      run: ls junit
 
     - name: Check docker image
       run: docker image build -t app .
     
-    - name: Send mail
-      uses: dawidd6/action-send-mail@v3
-      with: 
-        connection_url: ${{secrets.MAIL_CONNECTION}}
-        server_address: smtp.gmail.com
-        server_port: 465
-        secure: true
-        username: ${{secrets.MAIL_USERNAME}}
-        password: ${{secrets.MAIL_PASSWORD}}
-        subject: Github Actions job result
-        to: alvynabranches@gmail.com
-        from: Github Actions Job
-        body: Build job of ${{github.repository}} completed {{job.status}}}!
-        html_body: file://README.html
-        # cc: kyloren@example.com,leia@example.com
-        # bcc: r2d2@example.com,hansolo@example.com
-        # reply_to: luke@example.com
-        # in_reply_to: <random-luke@example.com>
-        ignore_cert: true
-        convert_markdown: true
-        attachments: junit/test-results.xml
-        priority: high
-      if: always()
+    - name: Push to GCR
+      run: docker push gcr.io/{{GKE_CLUSTER}}/app:lastest
+
+    - name: Publish GKE
+    
+    # - name: Send mail
+    #   uses: dawidd6/action-send-mail@v3
+    #   with: 
+    #     connection_url: ${{secrets.MAIL_CONNECTION}}
+    #     server_address: smtp.gmail.com
+    #     server_port: 465
+    #     secure: true
+    #     username: ${{secrets.MAIL_USERNAME}}
+    #     password: ${{secrets.MAIL_PASSWORD}}
+    #     subject: Github Actions job result
+    #     to: alvynabranches@gmail.com
+    #     from: Github Actions Job
+    #     body: Build job of ${{github.repository}} completed {{job.status}}}!
+    #     html_body: file://README.html
+    #     # cc: kyloren@example.com,leia@example.com
+    #     # bcc: r2d2@example.com,hansolo@example.com
+    #     # reply_to: luke@example.com
+    #     # in_reply_to: <random-luke@example.com>
+    #     ignore_cert: true
+    #     convert_markdown: true
+    #     attachments: junit/test-results.xml
+    #     priority: high
+    #   if: always()
         
